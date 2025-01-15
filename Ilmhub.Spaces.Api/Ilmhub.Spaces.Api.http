@@ -1,0 +1,6 @@
+@Ilmhub.Spaces.Api_HostAddress = http://localhost:5058
+
+GET {{Ilmhub.Spaces.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
