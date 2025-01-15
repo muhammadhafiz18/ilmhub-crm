@@ -8,13 +8,9 @@
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="pa-4">
     <MudStack Row="true" AlignItems="@AlignItems.Center" Spacing="3">
-        <MudButton Variant="Variant.Outlined"
-                   EndIcon="@Icons.Material.Filled.Add"
-                   Color="Color.Tertiary"
-                   Class="ma-4">
-            Qo'shish
-        </MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Add" Class="rounded-lg py-2 pa-4">Qo'shish</MudButton>
         <MudTextField T="string" ValueChanged="@(s => OnSearch(s))" Placeholder="Qidirish"
+                      FullWidth="true"
                       Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
                       IconSize="Size.Medium" Class="mt-0"></MudTextField>
         <MudMenu FullWidth="false" Class="menu-position">
@@ -39,12 +35,12 @@
             <ChildContent>
             @foreach (var column in new[] { "Yangi Lidlar", "Bog'lanilgan", "Kuzatuvda", "Yakuniy Holat" })
             {
-                <MudPaper Elevation="0" Style="height: calc(100vh - 175px); flex: 1; display: flex; flex-direction: column; min-width: 200px; max-width: 400px;" Class="pa-4 mx-1 transparent rounded-lg">
+                <MudPaper Elevation="0" Style="height: calc(100vh - 175px); flex: 1; display: flex; flex-direction: column; min-width: 150; max-width: 300px;" Class="mx-1 transparent rounded-lg">
                     <MudList T="Lead" Style="flex-grow: 1; overflow-y: auto;" Class="d-flex flex-column mud-height-full">
                         <MudListSubheader Class="d-flex align-items-center">
                             <MudText Typo="Typo.h6" Class="mt-0">@column</MudText>
                             <MudSpacer />
-                            <MudMenu Icon="@Icons.Material.Rounded.MoreVert" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" ListClass="pa-2 d-flex flex-column" PopoverClass="mud-elevation-25" class="mt-n2">
+                            <MudMenu Icon="@Icons.Material.Rounded.MoreVert" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" ListClass="d-flex flex-column" PopoverClass="mud-elevation-25" class="mt-n2">
                                 <MudButton Size="Size.Small" Color="Color.Error" StartIcon="@Icons.Material.Filled.FilterList">Filter</MudButton>
                                 <MudButton Size="Size.Small" Color="Color.Default" StartIcon="@Icons.Material.Filled.RemoveRedEye">Show invisible</MudButton>
                             </MudMenu>
@@ -55,7 +51,7 @@
             }
             </ChildContent>
             <ItemRenderer>
-                <MudCard Class="ma-4 rounded-lg" Elevation="5" @onclick="() => ShowLeadDetails(context)">
+                <MudCard Class="ma-4 my-4" @onclick="() => ShowLeadDetails(context)" Style="border: 1px solid #e0e0e0; border-radius: 8px; display: flex; flex-direction: column;">
                     <MudCardContent>
                         <MudStack Row="true" AlignItems="@AlignItems.Center">
                             <MudMenu Dense="true" MaxHeight="200">
@@ -84,13 +80,3 @@
         </MudDropContainer>
     </div>
 </MudContainer>
-
-<style>
-    .rotate-icon-45{
-        transform: rotate(45deg);
-    }
-    .rotate-icon-90{
-        transform: rotate(90deg);
-        transition: transform 0.3s ease; /* Optional for smooth animation */
-    }
-</style>
