@@ -41,8 +41,13 @@
             {
                 <MudPaper Elevation="0" Style="height: calc(100vh - 175px); flex: 1; display: flex; flex-direction: column; min-width: 200px; max-width: 400px;" Class="pa-4 mx-1 transparent rounded-lg">
                     <MudList T="Lead" Style="flex-grow: 1; overflow-y: auto;" Class="d-flex flex-column mud-height-full">
-                        <MudListSubheader>
+                        <MudListSubheader Class="d-flex align-items-center">
                             <MudText Typo="Typo.h6" Class="mt-0">@column</MudText>
+                            <MudSpacer />
+                            <MudMenu Icon="@Icons.Material.Rounded.MoreVert" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" ListClass="pa-2 d-flex flex-column" PopoverClass="mud-elevation-25" class="mt-n2">
+                                <MudButton Size="Size.Small" Color="Color.Error" StartIcon="@Icons.Material.Filled.FilterList">Filter</MudButton>
+                                <MudButton Size="Size.Small" Color="Color.Default" StartIcon="@Icons.Material.Filled.RemoveRedEye">Show invisible</MudButton>
+                            </MudMenu>
                         </MudListSubheader>
                         <MudDropZone T="Lead" Identifier="@column" Class="flex-grow-1 overflow-y-auto hide-scrollbar" AllowReorder="true"/>
                     </MudList>
@@ -79,3 +84,13 @@
         </MudDropContainer>
     </div>
 </MudContainer>
+
+<style>
+    .rotate-icon-45{
+        transform: rotate(45deg);
+    }
+    .rotate-icon-90{
+        transform: rotate(90deg);
+        transition: transform 0.3s ease; /* Optional for smooth animation */
+    }
+</style>
