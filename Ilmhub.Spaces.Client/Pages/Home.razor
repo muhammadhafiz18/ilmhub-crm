@@ -7,31 +7,43 @@
 @inject ILeadService LeadService
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="pa-4">
-    <MudStack Row="true" AlignItems="@AlignItems.Center" Spacing="5">
-        <MudSpacer />
-        <MudSpacer />
-        <MudSpacer />
-        <MudSpacer />
-        <MudButton StartIcon="@Icons.Material.Filled.Add" Class="rounded-lg py-2 pa-4">Qo'shish</MudButton>
+    <MudStack Row="true" AlignItems="@AlignItems.Center" Spacing="5" class="ml-2">
         <MudTextField T="string" ValueChanged="@(s => OnSearch(s))" Placeholder="Qidirish"
                       FullWidth="false"
                       Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
                       IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        <MudMenu Icon="@Icons.Material.Rounded.MoreVert" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" ListClass="d-flex flex-column" PopoverClass="mud-elevation-25" class="mt-n2">
+        <MudMenu ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" class="mr-n6" Dense>
             <ActivatorContent>
-                <MudButton Size="Size.Small" Color="Color.Error" StartIcon="@Icons.Material.Filled.FilterList">Filter</MudButton>
+                <MudMenuItem>Lead Source</MudMenuItem>
             </ActivatorContent>
+
             <ChildContent>
-                @foreach (var column in new[] { "Barchasi", "Yangi Lidlar", "Bog'lanilgan", "Kuzatuvda", "Yakuniy Holat" })
-                {
-                    <MudMenuItem Icon="@GetIconForColumn(column)" Style="@($"color: {GetColorForColumn(column)};")" @onclick="() => SetCurrentStatus(column)">@column</MudMenuItem>
-                }
+                <MudMenuItem> Telegram </MudMenuItem>
+                <MudMenuItem> Instagram </MudMenuItem>
+                <MudMenuItem> Referral </MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+
+        <MudMenu ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Dense>
+            <ActivatorContent>
+                <MudMenuItem Href="/">Qiziqqan kurslar</MudMenuItem>
+            </ActivatorContent>
+
+            <ChildContent>
+                <MudMenuItem>Web Dasturlash</MudMenuItem>
+                <MudMenuItem >Python Asoslari</MudMenuItem>
+                <MudMenuItem >Ma'lumotlar Bazasi</MudMenuItem>
+                <MudMenuItem >Java Dasturlash</MudMenuItem>
+                <MudMenuItem >Mobile Dasturlash</MudMenuItem>
+                <MudMenuItem >Python Asoslari</MudMenuItem>
             </ChildContent>
         </MudMenu>
         <MudSpacer />
         <MudSpacer />
         <MudSpacer />
         <MudSpacer />
+        
+        <MudButton StartIcon="@Icons.Material.Filled.Add" Class="rounded-lg py-2 pa-4 mr-2">Qo'shish</MudButton>
     </MudStack>
 
     <div class="hide-scrollbar" style="overflow-x: auto; white-space: nowrap;">
@@ -45,7 +57,6 @@
                             <MudText Typo="Typo.h6" Class="mt-0">@column</MudText>
                             <MudSpacer />
                             <MudMenu Icon="@Icons.Material.Rounded.MoreVert" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" ListClass="d-flex flex-column" PopoverClass="mud-elevation-25" class="mt-n2">
-                                <MudButton Size="Size.Small" Color="Color.Error" StartIcon="@Icons.Material.Filled.FilterList">Filter</MudButton>
                                 <MudButton Size="Size.Small" Color="Color.Default" StartIcon="@Icons.Material.Filled.RemoveRedEye">Show invisible</MudButton>
                             </MudMenu>
                         </MudListSubheader>
@@ -55,7 +66,7 @@
             }
             </ChildContent>
             <ItemRenderer>
-                <MudCard Class="ma-4 my-4" @onclick="() => ShowLeadDetails(context)" Style="border: 1px solid #e0e0e0; border-radius: 8px; display: flex; flex-direction: column;">
+                <MudCard Class="ma-4 my-4" @onclick="() => ShowLeadDetails(context)" Style="border-radius: 8px; display: flex; flex-direction: column;">
                     <MudCardContent>
                         <MudStack Row="true" AlignItems="@AlignItems.Center">
                             <MudMenu Dense="true" MaxHeight="200">
