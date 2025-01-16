@@ -57,10 +57,19 @@
                             <MudText Typo="Typo.h6" Class="mt-0">@column</MudText>
                             <MudSpacer />
                             <MudMenu Icon="@Icons.Material.Rounded.MoreVert" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" ListClass="d-flex flex-column" PopoverClass="mud-elevation-25" class="mt-n2">
+                                <MudButton Size="Size.Small" Color="Color.Default" OnClick="@(() => ToggleSort(column))" StartIcon="@Icons.Material.Filled.FilterList">
+                                    Sort @((!columnSortDirections.ContainsKey(column) || columnSortDirections[column] == SortDirection.Descending) ? "↑" : "↓")
+                                </MudButton>
                                 <MudButton Size="Size.Small" Color="Color.Default" StartIcon="@Icons.Material.Filled.RemoveRedEye">Show invisible</MudButton>
                             </MudMenu>
                         </MudListSubheader>
-                        <MudDropZone T="Lead" Identifier="@column" Class="flex-grow-1 overflow-y-auto hide-scrollbar" AllowReorder="true"/>
+                        <MudDropZone T="Lead" 
+                                     Identifier="@column" 
+                                     Class="flex-grow-1 overflow-y-auto hide-scrollbar" 
+                                     AllowReorder="true"
+                                     Items="@(columnLeads.ContainsKey(column) 
+                                             ? columnLeads[column] 
+                                             : filteredLeads.Where(l => GetColumnForStatus(l.Status) == column))"/>
                     </MudList>
                 </MudPaper>
             }

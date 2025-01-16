@@ -13,19 +13,35 @@ public partial class Home
     private List<Lead> filteredLeads = new();
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
-    private void Cancel()
+
+    private IEnumerable<Lead> SortLeads(IEnumerable<Lead> leads, string sortLabel, SortDirection direction)
     {
-        if (MudDialog != null)
+        if (string.IsNullOrEmpty(sortLabel))
+            return leads;
+
+        return sortLabel switch
         {
-            MudDialog.Cancel();
-        }
+            "ModifiedAt" => direction == SortDirection.Ascending
+                ? leads.OrderBy(l => l.ModifiedAt ?? l.CreatedAt)
+                : leads.OrderByDescending(l => l.ModifiedAt ?? l.CreatedAt),
+            _ => leads
+        };
     }
     private Dictionary<int, bool> leadDetailsVisibility = new Dictionary<int, bool>();
+    private Dictionary<string, SortDirection> columnSortDirections = new();
+    private Dictionary<string, List<Lead>> columnLeads = [];
 
     protected override async Task OnInitializedAsync()
     {
         leads = (await LeadService.GetLeadsAsync()).OrderByDescending(l => l.ModifiedAt).ToList();
         filteredLeads = new List<Lead>(leads);
+        
+        // Initialize columnLeads for each column
+        var columns = new[] { "Yangi Lidlar", "Bog'lanilgan", "Kuzatuvda", "Yakuniy Holat" };
+        foreach (var column in columns)
+        {
+            columnLeads[column] = leads.Where(l => GetColumnForStatus(l.Status) == column).ToList();
+        }
     }
 
     private void ShowLeadDetails(Lead lead)
@@ -182,5 +198,34 @@ public partial class Home
         }
 
         return result;
+    }
+
+    private void ToggleSort(string column)
+    {
+        // Initialize or toggle sort direction for this column
+        if (!columnSortDirections.ContainsKey(column))
+        {
+            columnSortDirections[column] = SortDirection.Ascending;
+        }
+        else
+        {
+            columnSortDirections[column] = columnSortDirections[column] == SortDirection.Ascending 
+                ? SortDirection.Descending 
+                : SortDirection.Ascending;
+        }
+
+        // Sort only the leads in this column
+        var columnLeads = leads.Where(l => GetColumnForStatus(l.Status) == column).ToList();
+        var sortedColumnLeads = SortLeads(columnLeads, "ModifiedAt", columnSortDirections[column]);
+        
+        // Update the main leads list with the sorted column while preserving other columns
+        var otherLeads = leads.Where(l => GetColumnForStatus(l.Status) != column).ToList();
+        leads = [.. otherLeads, .. sortedColumnLeads];
+        
+        // Update filtered leads
+        filteredLeads = [.. leads];
+        
+        StateHasChanged();
+        dropContainer.Refresh();
     }
 }
