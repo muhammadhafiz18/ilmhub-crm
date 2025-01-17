@@ -1,50 +1,27 @@
-name: Build and Deploy Blazor WASM to GitHub Pages
+name: Deploy BlazorTestApp to GitHub Pages
 
 on:
   push:
     branches:
-      - main  # Deploys when pushing to the main branch
+      - main  # Change to your default branch if it's not 'main'
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: write
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0  # Ensure full history is fetched for gh-pages branch
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '8.0.x'
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Cache .NET packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0'  # Change to your target .NET version
 
-    - name: Restore dependencies
-      run: dotnet restore ./Ilmhub.Spaces.Client/Ilmhub.Spaces.Client.csproj
+      - name: Publish Blazor WebAssembly app
+        run: dotnet publish -c Release -o ./publish
 
-    - name: Build
-      run: dotnet build --configuration Release ./Ilmhub.Spaces.Client/Ilmhub.Spaces.Client.csproj
-
-    - name: Publish
-      run: dotnet publish --configuration Release --output ./publish ./Ilmhub.Spaces.Client/Ilmhub.Spaces.Client.csproj
-
-    - name: Add .nojekyll file
-      run: touch ./publish/wwwroot/.nojekyll
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./publish/wwwroot
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./publish/wwwroot
