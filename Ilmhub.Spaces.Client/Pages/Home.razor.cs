@@ -48,6 +48,7 @@ public partial class Home
     private string? selectedSource;
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
+    private bool IsCleared { get; set; }
     private string[] courses =
     {
         "English Phonics 1", "English Phonics 2", "English Phonics 3", "English Phonics 4",
@@ -138,6 +139,13 @@ public partial class Home
 
         StateHasChanged();
         dropContainer.Refresh();
+
+        if (IsCleared is true)
+        {
+            _dateRange = new DateRange(DateTime.Today.AddDays(-7), DateTime.Today);
+        }
+
+        IsCleared = false;
     }
 
     private void Search3()
@@ -147,7 +155,7 @@ public partial class Home
             // Check if dates are in the future
             if (_dateRange.End.Value.Date > DateTime.Now.Date)
             {
-                _dateRange = new DateRange(null, null);
+                _dateRange = new DateRange(DateTime.Today.AddDays(-7), DateTime.Today);
                 Snackbar.Add("Iltimos hozirgi kundan avvalni tanlang", Severity.Error);
                 return;
             }
@@ -156,7 +164,7 @@ public partial class Home
             var daysDifference = (_dateRange.End.Value - _dateRange.Start.Value).TotalDays;
             if (daysDifference > 31)
             {
-                _dateRange = new DateRange(null, null);
+                _dateRange = new DateRange(DateTime.Today.AddDays(-7), DateTime.Today);
                 Snackbar.Add("Bir oydan ko'p tanlash mumkin emas", Severity.Error);
                 return;
             }
@@ -294,6 +302,7 @@ public partial class Home
         selectedCourse = null;
         selectedSource = null;
         _dateRange = new DateRange(null, null); // Reset date range
+        IsCleared = true;
         ApplyFilters();
     }
 }
