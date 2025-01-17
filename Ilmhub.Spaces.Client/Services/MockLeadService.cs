@@ -35,7 +35,7 @@ public class MockLeadService : ILeadService
                 ModifiedAt = DateTime.Now.AddDays(-random.Next(0, 30)),
                 Notes = "Potentsial o'quvchi bilan suhbat o'tkazildi.",
                 InterestedCourse = courses[random.Next(courses.Count)],
-                Reason = status == LeadStatus.Lost ? GetRandomLostReason() : null
+                Reason = status == LeadStatus.Yoqotildi ? GetRandomLostReason() : null
             });
         }
     }
