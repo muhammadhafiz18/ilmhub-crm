@@ -252,4 +252,14 @@ public partial class Home
         StateHasChanged();
         dropContainer.Refresh();
     }
+
+    private void ClearFilters()
+    {
+        searchQuery = "";
+        Value1 = null;
+        Value2 = null;
+        selectedCourse = null;
+        selectedSource = null;
+        ApplyFilters();
+    }
 }
