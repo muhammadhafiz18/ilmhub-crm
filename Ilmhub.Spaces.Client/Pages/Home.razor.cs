@@ -187,9 +187,21 @@ public partial class Home
             dropInfo.Item.ModifiedAt = DateTime.Now;
 
             await LeadService.UpdateLeadAsync(dropInfo.Item);
-            leads = leads.OrderByDescending(l => l.ModifiedAt).ToList();
-            StateHasChanged();
+            UpdateLeadsOrder();
         }
+    }
+
+    private void UpdateLeadsOrder()
+    {
+        // Sort the main leads list by ModifiedAt
+        leads = leads.OrderByDescending(l => l.ModifiedAt).ToList();
+        
+        // Update filtered leads while preserving current filters
+        var currentFiltered = filteredLeads.ToList();
+        filteredLeads = currentFiltered.OrderByDescending(l => l.ModifiedAt).ToList();
+        
+        StateHasChanged();
+        dropContainer.Refresh();
     }
 
     private async Task UpdateLeadStatus(Lead lead, LeadStatus newStatus)
