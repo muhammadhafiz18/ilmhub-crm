@@ -6,6 +6,10 @@ using MudBlazor;
 namespace Ilmhub.Spaces.Client.Pages;
 public partial class Home
 {
+    private bool resetValueOnEmptyText;
+    private bool coerceText;
+    private bool coerceValue;
+    private string value1, value2;
     private MudDropContainer<Lead> dropContainer = default!;
     private List<Lead> leads = new();
     private string searchQuery = "";
@@ -13,6 +17,42 @@ public partial class Home
     private List<Lead> filteredLeads = new();
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
+    private string[] courses =
+    {
+        "English Phonics 1", "English Phonics 2", "English Phonics 3", "English Phonics 4",
+        "English Starters", "English The Spire 1", "English The Spire 2", "English The Spire 3",
+        "English The Spire 4", "English The Spire 5", "English The Spire 6", "English Level 7",
+        "English Level 8", "IT Scratch", "IT Lego", "IT Extended Scratch", "Lego (Spike Prime)",
+        "IT Savodxonlik", "IT App inventor", "IT Robotics (extended)", "IT Extended Python", "IT AutoCAD",
+        "IT C++", "IT Frontend", "IT Backend"  
+    };
+
+    private string[] sources = 
+    {
+        "Telegram", "Instagram", "Referral"
+    };
+
+    private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return courses;
+        return courses.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<string>> Search2(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return sources;
+        return sources.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
 
     private IEnumerable<Lead> SortLeads(IEnumerable<Lead> leads, string sortLabel, SortDirection direction)
     {
