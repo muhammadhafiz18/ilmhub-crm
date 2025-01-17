@@ -111,7 +111,13 @@ public partial class Home
     protected override async Task OnInitializedAsync()
     {
         leads = (await LeadService.GetLeadsAsync()).OrderByDescending(l => l.ModifiedAt).ToList();
-        filteredLeads = new List<Lead>(leads);
+        
+        filteredLeads = leads.Where(l =>
+            (!_dateRange.Start.HasValue || !_dateRange.End.HasValue || 
+                (l.ModifiedAt.HasValue && 
+                 l.ModifiedAt.Value.Date >= _dateRange.Start.Value.Date && 
+                 l.ModifiedAt.Value.Date <= _dateRange.End.Value.Date))
+        ).ToList();
         
         // Initialize columnLeads for each column
         var columns = new[] { "Yangi Lidlar", "Bog'lanilgan", "Kuzatuvda", "Yakuniy Holat" };
@@ -119,6 +125,7 @@ public partial class Home
         {
             columnLeads[column] = leads.Where(l => GetColumnForStatus(l.Status) == column).ToList();
         }
+        
     }
 
     private void ShowLeadDetails(Lead lead)
