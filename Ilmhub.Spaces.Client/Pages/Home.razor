@@ -95,27 +95,37 @@
             <ItemRenderer>
                 <MudCard Class="ma-4 my-4" @onclick="() => ShowLeadDetails(context)" Elevation="1">
                     <MudCardContent>
-                        <MudStack Row="true" AlignItems="@AlignItems.Center">
-                            <MudMenu Dense="true" MaxHeight="200">
-                                <ActivatorContent>
-                                    <MudChip T="string" Variant="Variant.Text" Color="@GetColorForStatus(context.Status)" Size="Size.Small">@context.Status</MudChip>
-                                </ActivatorContent>
-                                <ChildContent>
-                                    @foreach (LeadStatus status in Enum.GetValues(typeof(LeadStatus)))
-                                    {
-                                        <MudMenuItem OnClick="@(() => UpdateLeadStatus(context, status))">@status</MudMenuItem>
-                                    }
-                                </ChildContent>
-                            </MudMenu>
-                            <MudText Typo="Typo.body2">@(context.Name?.Substring(0, Math.Min(context.Name?.Length ?? 0, 20)))</MudText>
-                        </MudStack>
-                        <MudStack>
-                            <MudStack Row="true" Justify="@Justify.FlexStart" AlignItems="@AlignItems.Start">
-                                <MudIcon class="pb-n3" Color="Color.Info" Style="font-size: small;" Icon="@Icons.Material.Rounded.LocalPhone" />
-                                <MudText Typo="Typo.body2">@FormatPhoneNumber(context.Phone)</MudText>
-                                <MudText Color="Color.Tertiary" Typo="Typo.body2">@(context.ModifiedAt?.ToString("dd MMM HH:mm") ?? context.CreatedAt.ToString("dd MMM HH:mm"))</MudText>
-                            </MudStack>
-                        </MudStack>
+                        <MudGrid>
+                            <MudItem xs="12">
+                                <MudStack>
+                                    <div class="d-flex align-center">
+                                        <MudText Typo="Typo.body2" Class="flex-grow-1">@(context.Name?.Substring(0, Math.Min(context.Name?.Length ?? 0, 20)))</MudText>
+                                        <MudSpacer />
+                                        <MudMenu Dense="true" MaxHeight="200" Class="ml-8">
+                                            <ActivatorContent>
+                                                <MudChip T="string" Variant="Variant.Text" Color="@GetColorForStatus(context.Status)" Size="Size.Small">@context.Status</MudChip>
+                                            </ActivatorContent>
+                                            <ChildContent>
+                                                @foreach (LeadStatus status in Enum.GetValues(typeof(LeadStatus)))
+                                                {
+                                                    <MudMenuItem OnClick="@(() => UpdateLeadStatus(context, status))">@status</MudMenuItem>
+                                                }
+                                            </ChildContent>
+                                        </MudMenu>
+                                    </div>
+                                    <div class="d-flex align-center">
+                                        <div class="d-flex align-center flex-grow-1">
+                                            <MudIcon class="pb-n3" Color="Color.Info" Style="font-size: small;" Icon="@Icons.Material.Rounded.LocalPhone" />
+                                            <MudText Typo="Typo.body2" class="ml-1">@FormatPhoneNumber(context.Phone)</MudText>
+                                        </div>
+                                        <MudSpacer />
+                                        <MudText Color="Color.Tertiary" Typo="Typo.body2" Class="ml-8">
+                                            @(context.ModifiedAt?.ToString("dd MMM HH:mm") ?? context.CreatedAt.ToString("dd MMM HH:mm"))
+                                        </MudText>
+                                    </div>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
                     </MudCardContent>
                 </MudCard> 
             </ItemRenderer>
