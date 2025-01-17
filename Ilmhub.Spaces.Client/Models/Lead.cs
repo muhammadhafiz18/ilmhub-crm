@@ -16,16 +16,16 @@ public class Lead
 
 public enum LeadStatus
 {
-    New,
-    Phone,
-    Contacted,
-    Recontact,
-    Incomplete,
-    Registered,
-    AttendedTrialLesson,
-    Acquired,
-    NotAcquired,
-    Lost
+    Yangi,
+    Aloqa,
+    Boglanildi,
+    QaytaBoglanish,
+    Tugallanmagan,
+    RegistratsiyaBolgan,
+    SinovDarsda,
+    Kelishilindi,
+    Kelishilinmadi,
+    Yoqotildi
 }
 
 public enum LeadSource

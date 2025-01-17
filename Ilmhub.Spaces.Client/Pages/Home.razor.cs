@@ -222,10 +222,10 @@ public partial class Home
     {
         return status switch
         {
-            LeadStatus.New => "Yangi Lidlar",
-            LeadStatus.Phone or LeadStatus.Contacted => "Bog'lanilgan",
-            LeadStatus.Recontact or LeadStatus.Incomplete or LeadStatus.Registered or LeadStatus.AttendedTrialLesson => "Kuzatuvda",
-            LeadStatus.Acquired or LeadStatus.NotAcquired or LeadStatus.Lost => "Yakuniy Holat",
+            LeadStatus.Yangi => "Yangi Lidlar",
+            LeadStatus.Aloqa or LeadStatus.Boglanildi => "Bog'lanilgan",
+            LeadStatus.QaytaBoglanish or LeadStatus.Tugallanmagan or LeadStatus.RegistratsiyaBolgan or LeadStatus.SinovDarsda => "Kuzatuvda",
+            LeadStatus.Kelishilindi or LeadStatus.Kelishilinmadi or LeadStatus.Yoqotildi => "Yakuniy Holat",
             _ => "Yangi Lidlar"
         };
     }
@@ -234,11 +234,11 @@ public partial class Home
     {
         return column switch
         {
-            "Yangi Lidlar" => LeadStatus.New,
-            "Bog'lanilgan" => LeadStatus.Contacted,
-            "Kuzatuvda" => LeadStatus.Recontact,
-            "Yakuniy Holat" => LeadStatus.Acquired,
-            _ => LeadStatus.New
+            "Yangi Lidlar" => LeadStatus.Yangi,
+            "Bog'lanilgan" => LeadStatus.Boglanildi,
+            "Kuzatuvda" => LeadStatus.QaytaBoglanish,
+            "Yakuniy Holat" => LeadStatus.Kelishilindi,
+            _ => LeadStatus.Yangi
         };
     }
 
@@ -246,16 +246,16 @@ public partial class Home
     {
         return status switch
         {
-            LeadStatus.New => Color.Info,
-            LeadStatus.Phone => Color.Warning,
-            LeadStatus.Contacted => Color.Primary,
-            LeadStatus.Recontact => Color.Secondary,
-            LeadStatus.Incomplete => Color.Error,
-            LeadStatus.Registered => Color.Success,
-            LeadStatus.AttendedTrialLesson => Color.Tertiary,
-            LeadStatus.Acquired => Color.Success,
-            LeadStatus.NotAcquired => Color.Error,
-            LeadStatus.Lost => Color.Dark,
+            LeadStatus.Yangi => Color.Info,
+            LeadStatus.Aloqa => Color.Warning,
+            LeadStatus.Boglanildi => Color.Primary,
+            LeadStatus.QaytaBoglanish => Color.Secondary,
+            LeadStatus.Tugallanmagan => Color.Error,
+            LeadStatus.RegistratsiyaBolgan => Color.Success,
+            LeadStatus.SinovDarsda => Color.Tertiary,
+            LeadStatus.Kelishilindi => Color.Success,
+            LeadStatus.Kelishilinmadi => Color.Error,
+            LeadStatus.Yoqotildi => Color.Dark,
             _ => Color.Default
         };
     }
