@@ -34,9 +34,9 @@
             <MudDateRangePicker @ref="_picker" Label="Maximum 1 month" @bind-DateRange="_dateRange" 
                                 PickerVariant="PickerVariant.Dialog">
                 <PickerActions>
-                    <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
-                    <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
-                    <MudButton Color="Color.Primary" OnClick="@(async () => { await _picker.CloseAsync(); Search3(); })">Ok</MudButton>
+                    <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker!.ClearAsync())">Clear</MudButton>
+                    <MudButton OnClick="@(() => _picker!.CloseAsync(false))">Cancel</MudButton>
+                    <MudButton Color="Color.Primary" OnClick="@(async () => { await _picker!.CloseAsync(); Search3(); })">Ok</MudButton>
                 </PickerActions>
             </MudDateRangePicker>
             </div>
@@ -44,7 +44,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.FilterListOff" 
                        Color="Color.Error" 
                        OnClick="ClearFilters" 
-                       Title="Clear all filters"
+                       title="Clear all filters"
                        class="mt-5"/>
         </MudGrid>
         
@@ -85,9 +85,9 @@
                                      Identifier="@column" 
                                      Class="flex-grow-1 overflow-y-auto hide-scrollbar pa-0" 
                                      AllowReorder="true"
-                                     ItemDraggingStyle="cursor: grabbing"
+                                     itemDraggingStyle="cursor: grabbing"
                                      DraggingClass="dragging"
-                                     Items="@(columnLeads.ContainsKey(column) 
+                                     items="@(columnLeads.ContainsKey(column) 
                                              ? columnLeads[column] 
                                              : filteredLeads.Where(l => GetColumnForStatus(l.Status) == column))"/>
                     </MudList>
