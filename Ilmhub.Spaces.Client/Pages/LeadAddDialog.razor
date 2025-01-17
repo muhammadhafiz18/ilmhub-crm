@@ -1,0 +1,43 @@
+@page "/lead-add"
+@using Ilmhub.Spaces.Client.Models
+@using MudBlazor
+@using System.Text.RegularExpressions
+
+<MudDialog>
+    <TitleContent>
+        <MudStack Row="true" Justify="@Justify.Center" AlignItems="@AlignItems.Center" StretchItems="@StretchItems.Middle">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Title="Info" Color="Color.Info" Size="Size.Large"/>
+            <MudText Typo="Typo.h6" Color="Color.Primary" Align="Align.Right">@(Lead.Name?.Substring(0, Math.Min(Lead.Name?.Length ?? 0, 20)))</MudText>
+        </MudStack>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing=2>
+            <MudStack Row="true" Justify="@Justify.FlexStart" AlignItems="@AlignItems.Center" StretchItems="@StretchItems.End">
+                <MudIcon Color="Color.Info" Style="font-size: medium;" Icon="@Icons.Material.Rounded.LocalPhone" />
+                <MudText Typo="Typo.subtitle1">@FormatPhoneNumber(Lead.Phone)</MudText>
+                <MudChip T="string" Variant="Variant.Text" Size="@Size.Medium" Icon="@Icons.Material.Rounded.PermContactCalendar" Color="Color.Secondary">@Lead.Source</MudChip>
+            </MudStack>
+
+            <MudStack Row="true" Justify="@Justify.Center" AlignItems="@AlignItems.Center" StretchItems="@StretchItems.All">
+                <MudChip T="string" Variant="Variant.Text" Size="@Size.Medium" Icon="@Icons.Material.Rounded.Star" Color="Color.Primary">@(Lead.InterestedCourse?.Name ?? "N/A")</MudChip>
+                <MudText Color="Color.Tertiary" Typo="Typo.subtitle2">@(Lead.ModifiedAt?.ToString("dd MMM HH:mm") ?? Lead.CreatedAt.ToString("dd MMM HH:mm"))</MudText>
+            </MudStack>
+            <MudStack Row="true" Justify="@Justify.Center" AlignItems="@AlignItems.Center" StretchItems="@StretchItems.Middle">
+                <MudTooltip Text="@Lead.Notes">
+                    <MudButton Class="rounded-pill px-4" Variant="Variant.Text" StartIcon="@Icons.Material.Rounded.Comment" Color="Color.Success">Izoh</MudButton>
+                </MudTooltip>
+                @if (string.IsNullOrWhiteSpace(Lead.Reason) is false)
+                {
+                    <MudTooltip Text="@Lead.Reason">
+                        <MudButton Class="rounded-pill px-4" Variant="Variant.Text" StartIcon="@Icons.Material.Rounded.EditNote" Color="Color.Error">Sabab</MudButton>
+                    </MudTooltip>
+                }
+            </MudStack>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Size="Size.Medium" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+

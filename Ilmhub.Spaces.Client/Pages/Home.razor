@@ -12,32 +12,24 @@
                       FullWidth="false"
                       Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
                       IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        <MudMenu ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" class="mr-n6" Dense>
-            <ActivatorContent>
-                <MudMenuItem>Lead Source</MudMenuItem>
-            </ActivatorContent>
-
-            <ChildContent>
-                <MudMenuItem>Telegram</MudMenuItem>
-                <MudMenuItem>Instagram</MudMenuItem>
-                <MudMenuItem>Referral</MudMenuItem>
-            </ChildContent>
-        </MudMenu>
-
-        <MudMenu ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Dense>
-            <ActivatorContent>
-                <MudMenuItem Href="/">Qiziqqan kurslar</MudMenuItem>
-            </ActivatorContent>
-
-            <ChildContent>
-                <MudMenuItem>Web Dasturlash</MudMenuItem>
-                <MudMenuItem >Python Asoslari</MudMenuItem>
-                <MudMenuItem >Ma'lumotlar Bazasi</MudMenuItem>
-                <MudMenuItem >Java Dasturlash</MudMenuItem>
-                <MudMenuItem >Mobile Dasturlash</MudMenuItem>
-                <MudMenuItem >Python Asoslari</MudMenuItem>
-            </ChildContent>
-        </MudMenu>
+        <MudGrid>
+            <MudItem class="mb-4">
+                <div class="w-200">
+                    <MudAutocomplete T="string" Label="Qiziqqan kurslari" @bind-Value="value1" SearchFunc="@Search1"
+                                    ResetValueOnEmptyText="@resetValueOnEmptyText"
+                                    CoerceText="@coerceText" CoerceValue="@coerceValue"
+                                    />
+                </div>
+            </MudItem>
+            <MudItem class="mb-4">
+                <div class="w-200">
+                <MudAutocomplete T="string" Label="Lead source" @bind-Value="value2" SearchFunc="@Search2"
+                                ResetValueOnEmptyText="@resetValueOnEmptyText"
+                                CoerceText="@coerceText" CoerceValue="@coerceValue"
+                                />
+                </div>
+            </MudItem>
+        </MudGrid>
         <MudSpacer />
         <MudSpacer />
         <MudSpacer />
@@ -104,3 +96,9 @@
         </MudDropContainer>
     </div>
 </MudContainer>
+
+<style>
+    .w-200 {
+        width: 200px;
+    }
+</style>
