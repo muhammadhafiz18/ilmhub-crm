@@ -30,7 +30,7 @@
                 </div>
             </MudItem>
             <MudItem>
-                <div class="w-205">
+                <div class="w-235">
             <MudDateRangePicker @ref="_picker" Label="Maximum 1 month" @bind-DateRange="_dateRange" 
                                 PickerVariant="PickerVariant.Dialog">
                 <PickerActions>
@@ -83,13 +83,15 @@
                         </MudListSubheader>
                         <MudDropZone T="Lead" 
                                      Identifier="@column" 
-                                     Class="flex-grow-1 overflow-y-auto hide-scrollbar" 
+                                     Class="flex-grow-1 overflow-y-auto hide-scrollbar pa-0" 
                                      AllowReorder="true"
+                                     ItemDraggingStyle="cursor: grabbing"
+                                     DraggingClass="dragging"
                                      Items="@(columnLeads.ContainsKey(column) 
                                              ? columnLeads[column] 
                                              : filteredLeads.Where(l => GetColumnForStatus(l.Status) == column))"/>
                     </MudList>
-                </MudPaper>
+                </MudPaper> 
             }
             </ChildContent>
             <ItemRenderer>
@@ -136,5 +138,9 @@
 <style>
     .w-200 {
         width: 200px;
+    }
+
+    .w-235 {
+        width: 235px;
     }
 </style>
