@@ -44,7 +44,7 @@ public partial class Home
     private List<Lead> filteredLeads = new();
     private string? selectedCourse;
     private MudDateRangePicker _picker;
-    private DateRange _dateRange = new DateRange();
+    private DateRange _dateRange = new DateRange(DateTime.Today.AddDays(-7), DateTime.Today);
     private string? selectedSource;
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
