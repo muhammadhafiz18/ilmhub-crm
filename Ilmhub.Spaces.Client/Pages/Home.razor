@@ -53,7 +53,15 @@
         <MudSpacer />
         <MudSpacer />
         
-        <MudButton StartIcon="@Icons.Material.Filled.Add" Class="rounded-lg py-2 pa-4 mr-2">Qo'shish</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.FileDownload" 
+                   Class="rounded-lg py-2 pa-2 mr-2"
+                   OnClick="ExportToExcel">
+            Export Excel
+        </MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Add" 
+                   Class="rounded-lg py-2 pa-4 mr-2">
+            Qo'shish
+        </MudButton>
     </MudStack>
 
     <div class="hide-scrollbar" style="overflow-x: auto; white-space: nowrap;">

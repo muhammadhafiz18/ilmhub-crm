@@ -2,6 +2,8 @@ using System.Text.RegularExpressions;
 using Ilmhub.Spaces.Client.Models;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using ClosedXML.Excel;
+using Microsoft.JSInterop;
 
 namespace Ilmhub.Spaces.Client.Pages;
 public partial class Home
@@ -63,6 +65,9 @@ public partial class Home
     {
         "Telegram", "Instagram", "Referral"
     };
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; } = default!;
 
     private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
@@ -316,5 +321,50 @@ public partial class Home
         _dateRange = new DateRange(null, null); // Reset date range
         IsCleared = true;
         ApplyFilters();
+    }
+
+    private async Task ExportToExcel()
+    {
+        using var workbook = new XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("Leads");
+
+        // Add headers
+        worksheet.Cell(1, 1).Value = "Name";
+        worksheet.Cell(1, 2).Value = "Phone";
+        worksheet.Cell(1, 3).Value = "Status";
+        worksheet.Cell(1, 4).Value = "Source";
+        worksheet.Cell(1, 5).Value = "Created At";
+        worksheet.Cell(1, 6).Value = "Modified At";
+        worksheet.Cell(1, 7).Value = "Interested Course";
+        worksheet.Cell(1, 8).Value = "Notes";
+
+        // Add data
+        for (int i = 0; i < filteredLeads.Count; i++)
+        {
+            var lead = filteredLeads[i];
+            int row = i + 2;
+
+            worksheet.Cell(row, 1).Value = lead.Name;
+            worksheet.Cell(row, 2).Value = lead.Phone;
+            worksheet.Cell(row, 3).Value = lead.Status.ToString();
+            worksheet.Cell(row, 4).Value = lead.Source.ToString();
+            worksheet.Cell(row, 5).Value = lead.CreatedAt;
+            worksheet.Cell(row, 6).Value = lead.ModifiedAt;
+            worksheet.Cell(row, 7).Value = lead.InterestedCourse?.Name;
+            worksheet.Cell(row, 8).Value = lead.Notes;
+        }
+
+        // Auto-fit columns
+        worksheet.Columns().AdjustToContents();
+
+        // Save to memory stream
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        var content = stream.ToArray();
+
+        // Download the file
+        await JSRuntime.InvokeVoidAsync("downloadFileFromStream", 
+            "leads.xlsx", 
+            Convert.ToBase64String(content));
     }
 }
