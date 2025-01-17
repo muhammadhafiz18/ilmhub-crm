@@ -10,46 +10,43 @@ public partial class Home
 {
     [Inject]
     private ISnackbar Snackbar { get; set; } = default!;    
-    private bool resetValueOnEmptyText;
-    private bool coerceText;
-    private bool coerceValue;
-    private string? _value1;
+    private readonly bool resetValueOnEmptyText = false;
+    private readonly bool coerceText = false;
+    private readonly bool coerceValue = false;
+    private string? value1;
     private string? Value1
     {
-        get => _value1;
+        get => value1;
         set
         {
-            if (_value1 == value) return;
-            _value1 = value;
+            if (value1 == value) return;
+            value1 = value;
             selectedCourse = value;
             ApplyFilters();
         }
     }
 
-    private string? _value2;
+    private string? value2;
     private string? Value2
     {
-        get => _value2;
+        get => value2;
         set
         {
-            if (_value2 == value) return;
-            _value2 = value;
+            if (value2 == value) return;
+            value2 = value;
             selectedSource = value;
             ApplyFilters();
         }
     }
 
     private MudDropContainer<Lead> dropContainer = default!;
-    private List<Lead> leads = new();
+    private List<Lead> leads = [];
     private string searchQuery = "";
-    private string currentStatus = "Barchasi";
-    private List<Lead> filteredLeads = new();
+    private List<Lead> filteredLeads = [];
     private string? selectedCourse;
-    private MudDateRangePicker _picker;
-    private DateRange _dateRange = new DateRange(DateTime.Today.AddDays(-7), DateTime.Today);
+    private MudDateRangePicker? _picker;
+    private DateRange _dateRange = new(DateTime.Today.AddDays(-7), DateTime.Today);
     private string? selectedSource;
-    [CascadingParameter]
-    private MudDialogInstance? MudDialog { get; set; }
     private bool IsCleared { get; set; }
     private string[] courses =
     {
@@ -71,10 +68,8 @@ public partial class Home
 
     private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
-        // In real life use an asynchronous function for fetching data from an api.
         await Task.Delay(5, token);
 
-        // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
             return courses;
         return courses.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
@@ -82,16 +77,14 @@ public partial class Home
 
     private async Task<IEnumerable<string>> Search2(string value, CancellationToken token)
     {
-        // In real life use an asynchronous function for fetching data from an api.
         await Task.Delay(5, token);
 
-        // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
             return sources;
         return sources.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    private IEnumerable<Lead> SortLeads(IEnumerable<Lead> leads, string sortLabel, SortDirection direction)
+    private static IEnumerable<Lead> SortLeads(IEnumerable<Lead> leads, string sortLabel, SortDirection direction)
     {
         if (string.IsNullOrEmpty(sortLabel))
             return leads;
@@ -104,26 +97,24 @@ public partial class Home
             _ => leads
         };
     }
-    private Dictionary<int, bool> leadDetailsVisibility = new Dictionary<int, bool>();
-    private Dictionary<string, SortDirection> columnSortDirections = new();
-    private Dictionary<string, List<Lead>> columnLeads = [];
+    private readonly Dictionary<string, SortDirection> columnSortDirections = [];
+    private readonly Dictionary<string, List<Lead>> columnLeads = [];
 
     protected override async Task OnInitializedAsync()
     {
         leads = (await LeadService.GetLeadsAsync()).OrderByDescending(l => l.ModifiedAt).ToList();
         
-        filteredLeads = leads.Where(l =>
-            (!_dateRange.Start.HasValue || !_dateRange.End.HasValue || 
+        filteredLeads = [.. leads.Where(l =>
+            !_dateRange.Start.HasValue || !_dateRange.End.HasValue || 
                 (l.ModifiedAt.HasValue && 
                  l.ModifiedAt.Value.Date >= _dateRange.Start.Value.Date && 
-                 l.ModifiedAt.Value.Date <= _dateRange.End.Value.Date))
-        ).ToList();
+                 l.ModifiedAt.Value.Date <= _dateRange.End.Value.Date)
+        )];
         
-        // Initialize columnLeads for each column
         var columns = new[] { "Yangi Lidlar", "Bog'lanilgan", "Kuzatuvda", "Yakuniy Holat" };
         foreach (var column in columns)
         {
-            columnLeads[column] = leads.Where(l => GetColumnForStatus(l.Status) == column).ToList();
+            columnLeads[column] = [.. leads.Where(l => GetColumnForStatus(l.Status) == column)];
         }
         
     }
@@ -135,7 +126,7 @@ public partial class Home
 
     private void ApplyFilters()
     {
-        filteredLeads = leads.Where(l =>
+        filteredLeads = [.. leads.Where(l =>
             (string.IsNullOrEmpty(searchQuery) || 
                 l.Name?.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) == true ||
                 l.Phone?.Contains(searchQuery) == true) &&
@@ -147,7 +138,7 @@ public partial class Home
                 (l.ModifiedAt.HasValue && 
                  l.ModifiedAt.Value.Date >= _dateRange.Start.Value.Date && 
                  l.ModifiedAt.Value.Date <= _dateRange.End.Value.Date))
-        ).ToList();
+        )];
 
         StateHasChanged();
         dropContainer.Refresh();
@@ -164,7 +155,6 @@ public partial class Home
     {
         if (_dateRange.Start.HasValue && _dateRange.End.HasValue)
         {
-            // Check if dates are in the future
             if (_dateRange.End.Value.Date > DateTime.Now.Date)
             {
                 _dateRange = new DateRange(DateTime.Today.AddDays(-7), DateTime.Today);
@@ -172,7 +162,6 @@ public partial class Home
                 return;
             }
 
-            // Check if date range is more than a month
             var daysDifference = (_dateRange.End.Value - _dateRange.Start.Value).TotalDays;
             if (daysDifference > 31)
             {
@@ -205,10 +194,8 @@ public partial class Home
 
     private void UpdateLeadsOrder()
     {
-        // Sort the main leads list by ModifiedAt
-        leads = leads.OrderByDescending(l => l.ModifiedAt).ToList();
+        leads = [.. leads.OrderByDescending(l => l.ModifiedAt)];
         
-        // Update filtered leads while preserving current filters
         var currentFiltered = filteredLeads.ToList();
         filteredLeads = currentFiltered.OrderByDescending(l => l.ModifiedAt).ToList();
         
@@ -221,11 +208,11 @@ public partial class Home
         lead.Status = newStatus;
         lead.ModifiedAt = DateTime.Now;
         await LeadService.UpdateLeadAsync(lead);
-        leads = leads.OrderByDescending(l => l.ModifiedAt).ToList();
+        leads = [.. leads.OrderByDescending(l => l.ModifiedAt)];
         StateHasChanged();
     }
 
-    private string GetColumnForStatus(LeadStatus status)
+    private static string GetColumnForStatus(LeadStatus status)
     {
         return status switch
         {
@@ -237,7 +224,7 @@ public partial class Home
         };
     }
 
-    private LeadStatus GetStatusForColumn(string column)
+    private static LeadStatus GetStatusForColumn(string column)
     {
         return column switch
         {
@@ -249,7 +236,7 @@ public partial class Home
         };
     }
 
-    private Color GetColorForStatus(LeadStatus status)
+    private static Color GetColorForStatus(LeadStatus status)
     {
         return status switch
         {
@@ -274,16 +261,13 @@ public partial class Home
             return string.Empty;
         }
 
-        // Regular expression to match and capture digits
         var regex = new Regex(@"(\d{2})[\s\-]?(\d{3})[\s\-]?(\d{4})");
 
-        // Replace the matched digits with the desired format
         var result = regex.Replace(input, "$1 $2 $3");
 
-        // Handle cases where input doesn't match the pattern
         if (result == input)
         {
-            return input; // Return original input if it doesn't match the pattern
+            return input; 
         }
 
         return result;
@@ -291,7 +275,6 @@ public partial class Home
 
     private void ToggleSort(string column)
     {
-        // Initialize or toggle sort direction for this column
         if (!columnSortDirections.ContainsKey(column))
         {
             columnSortDirections[column] = SortDirection.Ascending;
@@ -303,15 +286,12 @@ public partial class Home
                 : SortDirection.Ascending;
         }
 
-        // Sort only the leads in this column
         var columnLeads = leads.Where(l => GetColumnForStatus(l.Status) == column).ToList();
         var sortedColumnLeads = SortLeads(columnLeads, "ModifiedAt", columnSortDirections[column]);
         
-        // Update the main leads list with the sorted column while preserving other columns
         var otherLeads = leads.Where(l => GetColumnForStatus(l.Status) != column).ToList();
         leads = [.. otherLeads, .. sortedColumnLeads];
         
-        // Update filtered leads
         filteredLeads = [.. leads];
         
         StateHasChanged();
@@ -325,7 +305,7 @@ public partial class Home
         Value2 = null;
         selectedCourse = null;
         selectedSource = null;
-        _dateRange = new DateRange(null, null); // Reset date range
+        _dateRange = new DateRange(null, null); 
         IsCleared = true;
         ApplyFilters();
     }
@@ -335,7 +315,6 @@ public partial class Home
         using var workbook = new XLWorkbook();
         var worksheet = workbook.Worksheets.Add("Leads");
 
-        // Add headers
         worksheet.Cell(1, 1).Value = "Name";
         worksheet.Cell(1, 2).Value = "Phone";
         worksheet.Cell(1, 3).Value = "Status";
@@ -345,7 +324,6 @@ public partial class Home
         worksheet.Cell(1, 7).Value = "Interested Course";
         worksheet.Cell(1, 8).Value = "Notes";
 
-        // Add data
         for (int i = 0; i < filteredLeads.Count; i++)
         {
             var lead = filteredLeads[i];
@@ -361,17 +339,14 @@ public partial class Home
             worksheet.Cell(row, 8).Value = lead.Notes;
         }
 
-        // Auto-fit columns
         worksheet.Columns().AdjustToContents();
 
-        // Save to memory stream
         using var stream = new MemoryStream();
         workbook.SaveAs(stream);
         var content = stream.ToArray();
 
-        // Download the file
         await JSRuntime.InvokeVoidAsync("downloadFileFromStream", 
-            "leads.xlsx", 
+            "Ilmhub Leads.xlsx", 
             Convert.ToBase64String(content));
     }
 }
