@@ -29,6 +29,18 @@
                                 />
                 </div>
             </MudItem>
+            <MudItem>
+                <div class="w-205">
+            <MudDateRangePicker @ref="_picker" Label="Maximum 1 month" @bind-DateRange="_dateRange" 
+                                PickerVariant="PickerVariant.Dialog">
+                <PickerActions>
+                    <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
+                    <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
+                    <MudButton Color="Color.Primary" OnClick="@(async () => { await _picker.CloseAsync(); Search3(); })">Ok</MudButton>
+                </PickerActions>
+            </MudDateRangePicker>
+            </div>
+        </MudItem>
         </MudGrid>
         <MudIconButton Icon="@Icons.Material.Filled.Clear" 
                        Color="Color.Error" 

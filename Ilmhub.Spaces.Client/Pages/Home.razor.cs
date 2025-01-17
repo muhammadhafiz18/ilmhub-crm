@@ -6,6 +6,8 @@ using MudBlazor;
 namespace Ilmhub.Spaces.Client.Pages;
 public partial class Home
 {
+    [Inject]
+    private ISnackbar Snackbar { get; set; } = default!;    
     private bool resetValueOnEmptyText;
     private bool coerceText;
     private bool coerceValue;
@@ -41,6 +43,8 @@ public partial class Home
     private string currentStatus = "Barchasi";
     private List<Lead> filteredLeads = new();
     private string? selectedCourse;
+    private MudDateRangePicker _picker;
+    private DateRange _dateRange = new DateRange();
     private string? selectedSource;
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
@@ -125,11 +129,40 @@ public partial class Home
             (string.IsNullOrEmpty(selectedCourse) || 
                 l.InterestedCourse?.Name == selectedCourse) &&
             (string.IsNullOrEmpty(selectedSource) || 
-                l.Source.ToString() == selectedSource)
+                l.Source.ToString() == selectedSource) &&
+            (!_dateRange.Start.HasValue || !_dateRange.End.HasValue || 
+                (l.ModifiedAt.HasValue && 
+                 l.ModifiedAt.Value.Date >= _dateRange.Start.Value.Date && 
+                 l.ModifiedAt.Value.Date <= _dateRange.End.Value.Date))
         ).ToList();
 
         StateHasChanged();
         dropContainer.Refresh();
+    }
+
+    private void Search3()
+    {
+        if (_dateRange.Start.HasValue && _dateRange.End.HasValue)
+        {
+            // Check if dates are in the future
+            if (_dateRange.End.Value.Date > DateTime.Now.Date)
+            {
+                _dateRange = new DateRange(null, null);
+                Snackbar.Add("Iltimos hozirgi kundan avvalni tanlang", Severity.Error);
+                return;
+            }
+
+            // Check if date range is more than a month
+            var daysDifference = (_dateRange.End.Value - _dateRange.Start.Value).TotalDays;
+            if (daysDifference > 31)
+            {
+                _dateRange = new DateRange(null, null);
+                Snackbar.Add("Bir oydan ko'p tanlash mumkin emas", Severity.Error);
+                return;
+            }
+        }
+
+        ApplyFilters();
     }
 
     private void OnSearch(string text)
@@ -260,6 +293,7 @@ public partial class Home
         Value2 = null;
         selectedCourse = null;
         selectedSource = null;
+        _dateRange = new DateRange(null, null); // Reset date range
         ApplyFilters();
     }
 }
