@@ -5,7 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <base href="/" />
+    <title>Ilmhub CRM</title>
+    <script>
+        const base = document.createElement('base');
+        base.href = window.location.hostname === 'localhost' ? '/' : '/ilmhub-crm/ ';
+        document.head.appendChild(base);
+    </script>
     <link rel="icon" type="image/png" href="favicon.png" />
 
     <link href="css/app.css" rel="stylesheet" />

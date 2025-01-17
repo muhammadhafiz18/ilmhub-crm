@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "Ilmhub.Spaces.Client",
   "resources": {
-    "hash": "sha256-08k0dU/DXJBTx/+8ZCNupEQMITAj8WlxL/XhAT+/ELk=",
+    "hash": "sha256-u3aHCUPxFwec8F0p3sCriIIH0qAJmjub7qB95d0sAIY=",
     "jsModuleNative": {
       "dotnet.native.8.0.12.5019ia6r61.js": "sha256-B6DNRvFeCUi3jbx9uKpuj+hV9cN0KG4RdZj1FgBZwj8="
     },
@@ -20,7 +20,7 @@
       "ClosedXML.wasm": "sha256-HJH+OND5D9wPSPoJuLhLcQqNef0K+8jhGqkB8s74m6Q=",
       "DocumentFormat.OpenXml.wasm": "sha256-3I/clASxk/UzSSrkiViU80bwivYNpMMeg4qOfarpwLc=",
       "ExcelNumberFormat.wasm": "sha256-DWrWJf+NGbjj12iqpO+Ufl4YS0bkW1yz6JwjocU15wY=",
-      "Ilmhub.Spaces.Client.wasm": "sha256-iWgIskJxvjswpI7tLhsCKvlyhPXBMqSlz5WQFBeb+5w=",
+      "Ilmhub.Spaces.Client.wasm": "sha256-QeNphsmgDmT9fTMsjaHp7PYNLnc/WQ/eUunsGTln07U=",
       "Irony.wasm": "sha256-vmJnOpZnIUHzxDh+yLQX/04qpF8AkhwV3Pqv7geGFCI=",
       "Microsoft.AspNetCore.Components.Forms.wasm": "sha256-un0mWHcNYsRjdRZz/RwoEXZ36QV3diPGsr1753foDzQ=",
       "Microsoft.AspNetCore.Components.wasm": "sha256-eQBr1dXa97D0Ruxcf4hERlMCk6z7Z0Rv4EEuKy9CFag=",
