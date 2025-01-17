@@ -9,15 +9,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: write
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
       with:
-        fetch-depth: 0 # Ensure full history is fetched to avoid any issues with the gh-pages branch
+        fetch-depth: 0  # Ensure full history is fetched for gh-pages branch
+    
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '8.0.x' # Make sure this matches your .NET version
+        dotnet-version: '8.0.x'
+
+    - name: Cache .NET packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
 
     - name: Restore dependencies
       run: dotnet restore ./Ilmhub.Spaces.Client/Ilmhub.Spaces.Client.csproj
@@ -28,7 +40,6 @@ jobs:
     - name: Publish
       run: dotnet publish --configuration Release --output ./publish ./Ilmhub.Spaces.Client/Ilmhub.Spaces.Client.csproj
 
-    # add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project. (Allow files and folders starting with an underscore)
     - name: Add .nojekyll file
       run: touch ./publish/wwwroot/.nojekyll
 
@@ -37,5 +48,3 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./publish/wwwroot
-    permissions:
-      contents: write
