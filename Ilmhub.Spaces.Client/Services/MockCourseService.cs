@@ -14,20 +14,64 @@ public class MockCourseService : ICourseService
 
     public MockCourseService()
     {
-        courses = new List<Course>
+        var courseNames = new[]
         {
-            new Course { Id = 1, Name = "Web Dasturlash", Description = "HTML, CSS, va JavaScript asoslari", Price = 1500000, DurationInWeeks = 12, Instructor = "Alisher Qodirov", StartDate = DateTime.Now.AddDays(7), IsActive = true },
-            new Course { Id = 2, Name = "Python Asoslari", Description = "Python dasturlash tili bo'yicha boshlang'ich kurs", Price = 1200000, DurationInWeeks = 8, Instructor = "Gulnora Karimova", StartDate = DateTime.Now.AddDays(14), IsActive = true },
-            new Course { Id = 3, Name = "Ma'lumotlar Bazasi", Description = "SQL va PostgreSQL bo'yicha amaliy kurs", Price = 1800000, DurationInWeeks = 10, Instructor = "Bobur Alimov", StartDate = DateTime.Now.AddDays(21), IsActive = true },
-            new Course { Id = 4, Name = "Java Dasturlash", Description = "Java dasturlash tili va OOP kontseptsiyalari", Price = 2000000, DurationInWeeks = 16, Instructor = "Dilshod Tursunov", StartDate = DateTime.Now.AddDays(30), IsActive = true },
-            new Course { Id = 5, Name = "Mobile Dasturlash", Description = "Android va iOS uchun mobil ilovalar yaratish", Price = 2500000, DurationInWeeks = 20, Instructor = "Nodira Azizova", StartDate = DateTime.Now.AddDays(45), IsActive = true },
-            new Course { Id = 6, Name = "Frontend Frameworklar", Description = "React va Vue.js bo'yicha amaliy kurs", Price = 1800000, DurationInWeeks = 14, Instructor = "Jamshid Nurmatov", StartDate = DateTime.Now.AddDays(60), IsActive = true },
-            new Course { Id = 7, Name = "Backend Dasturlash", Description = "Node.js va Express.js orqali server yaratish", Price = 2200000, DurationInWeeks = 16, Instructor = "Sarvar Abdullayev", StartDate = DateTime.Now.AddDays(75), IsActive = true },
-            new Course { Id = 8, Name = "DevOps Asoslari", Description = "Docker, Kubernetes va CI/CD jarayonlari", Price = 2800000, DurationInWeeks = 18, Instructor = "Oybek Toshpulatov", StartDate = DateTime.Now.AddDays(90), IsActive = true },
-            new Course { Id = 9, Name = "Kiberhavfsizlik", Description = "Tarmoq va dasturiy ta'minot xavfsizligi asoslari", Price = 3000000, DurationInWeeks = 20, Instructor = "Malika Rahimova", StartDate = DateTime.Now.AddDays(105), IsActive = true },
-            new Course { Id = 10, Name = "Sun'iy Intellekt", Description = "Machine Learning va Deep Learning asoslari", Price = 3500000, DurationInWeeks = 24, Instructor = "Akmal Xolmatov", StartDate = DateTime.Now.AddDays(120), IsActive = true },
-            // ... (add 10 more courses with similar Uzbek-themed information)
+            "English Phonics 1", "English Phonics 2", "English Phonics 3", "English Phonics 4",
+            "English Starters", "English The Spire 1", "English The Spire 2", "English The Spire 3",
+            "English The Spire 4", "English The Spire 5", "English The Spire 6", "English Level 7",
+            "English Level 8", "IT Scratch", "IT Lego", "IT Extended Scratch", "Lego (Spike Prime)",
+            "IT Savodxonlik", "IT App inventor", "IT Robotics (extended)", "IT Extended Python", "IT AutoCAD",
+            "IT C++", "IT Frontend", "IT Backend"
         };
+
+        courses = courseNames.Select((name, index) => new Course
+        {
+            Id = index + 1,
+            Name = name,
+            Description = GetDescription(name),
+            Price = GetPrice(name),
+            DurationInWeeks = GetDuration(name),
+            Instructor = GetInstructor(index),
+            StartDate = DateTime.Now.AddDays((index + 1) * 7),
+            IsActive = true
+        }).ToList();
+    }
+
+    private string GetDescription(string courseName)
+    {
+        if (courseName.StartsWith("English"))
+            return "English language course focused on comprehensive learning";
+        if (courseName.StartsWith("IT"))
+            return "Programming and technology course for modern development";
+        return "Comprehensive technical course for skill development";
+    }
+
+    private decimal GetPrice(string courseName)
+    {
+        if (courseName.StartsWith("English"))
+            return 1200000M;
+        if (courseName.StartsWith("IT"))
+            return 1800000M;
+        return 1500000M;
+    }
+
+    private int GetDuration(string courseName)
+    {
+        if (courseName.StartsWith("English"))
+            return 12;
+        if (courseName.StartsWith("IT"))
+            return 16;
+        return 14;
+    }
+
+    private string GetInstructor(int index)
+    {
+        var instructors = new[]
+        {
+            "John Smith", "Sarah Johnson", "Michael Brown", "Emma Davis",
+            "David Wilson", "Lisa Anderson", "Robert Taylor", "Jennifer Martin"
+        };
+        return instructors[index % instructors.Length];
     }
 
     public ValueTask<IEnumerable<Course>> GetCoursesAsync(CancellationToken cancellationToken = default) => 
