@@ -25,3 +25,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./publish/wwwroot
+
+      - name: Push changes
+        run: git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/muhammadhafiz18/ilmhub-crm.git gh-pages
+
