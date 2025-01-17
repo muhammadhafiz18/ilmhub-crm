@@ -9,12 +9,39 @@ public partial class Home
     private bool resetValueOnEmptyText;
     private bool coerceText;
     private bool coerceValue;
-    private string value1, value2;
+    private string? _value1;
+    private string? Value1
+    {
+        get => _value1;
+        set
+        {
+            if (_value1 == value) return;
+            _value1 = value;
+            selectedCourse = value;
+            ApplyFilters();
+        }
+    }
+
+    private string? _value2;
+    private string? Value2
+    {
+        get => _value2;
+        set
+        {
+            if (_value2 == value) return;
+            _value2 = value;
+            selectedSource = value;
+            ApplyFilters();
+        }
+    }
+
     private MudDropContainer<Lead> dropContainer = default!;
     private List<Lead> leads = new();
     private string searchQuery = "";
     private string currentStatus = "Barchasi";
     private List<Lead> filteredLeads = new();
+    private string? selectedCourse;
+    private string? selectedSource;
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
     private string[] courses =
@@ -89,43 +116,26 @@ public partial class Home
         DialogService.Show<LeadDetailsDialog>("Lead Details", new DialogParameters { ["Lead"] = lead });
     }
 
+    private void ApplyFilters()
+    {
+        filteredLeads = leads.Where(l =>
+            (string.IsNullOrEmpty(searchQuery) || 
+                l.Name?.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) == true ||
+                l.Phone?.Contains(searchQuery) == true) &&
+            (string.IsNullOrEmpty(selectedCourse) || 
+                l.InterestedCourse?.Name == selectedCourse) &&
+            (string.IsNullOrEmpty(selectedSource) || 
+                l.Source.ToString() == selectedSource)
+        ).ToList();
+
+        StateHasChanged();
+        dropContainer.Refresh();
+    }
+
     private void OnSearch(string text)
     {
         searchQuery = text;
-
-        if (string.IsNullOrEmpty(text))
-        {
-            filteredLeads = new List<Lead>(leads);
-        }
-        else
-        {
-            filteredLeads = leads.Where(l =>
-                (string.IsNullOrEmpty(currentStatus) || currentStatus == "Barchasi" || GetColumnForStatus(l.Status) == currentStatus) &&
-                (l.Name?.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) == true ||
-                    l.Phone?.Contains(searchQuery) == true))
-                .ToList();
-        }
-
-        StateHasChanged();
-    }
-
-    private void SetCurrentStatus(string status)
-    {
-        currentStatus = status;
-        if (!string.IsNullOrEmpty(searchQuery))
-        {
-            filteredLeads = leads.Where(l =>
-                (currentStatus == "Barchasi" || GetColumnForStatus(l.Status) == currentStatus) &&
-                (l.Name?.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) == true ||
-                    l.Phone?.Contains(searchQuery) == true))
-                .ToList();
-        }
-        else
-        {
-            filteredLeads = new List<Lead>(leads);
-        }
-
-        StateHasChanged();
+        ApplyFilters();
     }
 
     private async Task LeadUpdated(MudItemDropInfo<Lead> dropInfo)
@@ -171,32 +181,6 @@ public partial class Home
             "Kuzatuvda" => LeadStatus.Recontact,
             "Yakuniy Holat" => LeadStatus.Acquired,
             _ => LeadStatus.New
-        };
-    }
-
-    private string GetColorForColumn(string column)
-    {
-        return column switch
-        {
-            "Barchasi" => "default",
-            "Yangi Lidlar" => "dodgerblue",
-            "Bog'lanilgan" => "orange",
-            "Kuzatuvda" => "mediumvioletred",
-            "Yakuniy Holat" => "seagreen",
-            _ => "Barchasi"
-        };
-    }
-
-    private string GetIconForColumn(string column)
-    {
-        return column switch
-        {
-            "Barchasi" => Icons.Material.Filled.SelectAll,
-            "Yangi Lidlar" => Icons.Material.Filled.NewLabel,
-            "Bog'lanilgan" => Icons.Material.Filled.Phone,
-            "Kuzatuvda" => Icons.Material.Filled.Visibility,
-            "Yakuniy Holat" => Icons.Material.Filled.Done,
-            _ => Icons.Material.Filled.NewLabel
         };
     }
 
