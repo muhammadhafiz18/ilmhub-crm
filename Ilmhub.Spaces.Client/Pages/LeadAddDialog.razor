@@ -1,43 +1,103 @@
-@page "/lead-add"
-@using Ilmhub.Spaces.Client.Models
-@using MudBlazor
 @using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@inject ISnackbar Snackbar
+@using Ilmhub.Spaces.Client.Services
+@using Ilmhub.Spaces.Client.Interfaces
+@inject ILeadService LeadService
 
-<MudDialog>
+<MudDialog OnLeadAdded="OnLeadAdded">
     <TitleContent>
-        <MudStack Row="true" Justify="@Justify.Center" AlignItems="@AlignItems.Center" StretchItems="@StretchItems.Middle">
-            <MudIcon Icon="@Icons.Material.Filled.Info" Title="Info" Color="Color.Info" Size="Size.Large"/>
-            <MudText Typo="Typo.h6" Color="Color.Primary" Align="Align.Right">@(Lead.Name?.Substring(0, Math.Min(Lead.Name?.Length ?? 0, 20)))</MudText>
-        </MudStack>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-3 mb-n1"/>
+            Yangi lid qo'shish
+        </MudText>
     </TitleContent>
     <DialogContent>
-        <MudStack Spacing=2>
-            <MudStack Row="true" Justify="@Justify.FlexStart" AlignItems="@AlignItems.Center" StretchItems="@StretchItems.End">
-                <MudIcon Color="Color.Info" Style="font-size: medium;" Icon="@Icons.Material.Rounded.LocalPhone" />
-                <MudText Typo="Typo.subtitle1">@FormatPhoneNumber(Lead.Phone)</MudText>
-                <MudChip T="string" Variant="Variant.Text" Size="@Size.Medium" Icon="@Icons.Material.Rounded.PermContactCalendar" Color="Color.Secondary">@Lead.Source</MudChip>
-            </MudStack>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudTextField T="string" Label="Ismi" Required="true" @bind-Value="lead.Name"  RequiredError="Lid ismini kiritish majburiy" />
 
-            <MudStack Row="true" Justify="@Justify.Center" AlignItems="@AlignItems.Center" StretchItems="@StretchItems.All">
-                <MudChip T="string" Variant="Variant.Text" Size="@Size.Medium" Icon="@Icons.Material.Rounded.Star" Color="Color.Primary">@(Lead.InterestedCourse?.Name ?? "N/A")</MudChip>
-                <MudText Color="Color.Tertiary" Typo="Typo.subtitle2">@(Lead.ModifiedAt?.ToString("dd MMM HH:mm") ?? Lead.CreatedAt.ToString("dd MMM HH:mm"))</MudText>
-            </MudStack>
-            <MudStack Row="true" Justify="@Justify.Center" AlignItems="@AlignItems.Center" StretchItems="@StretchItems.Middle">
-                <MudTooltip Text="@Lead.Notes">
-                    <MudButton Class="rounded-pill px-4" Variant="Variant.Text" StartIcon="@Icons.Material.Rounded.Comment" Color="Color.Success">Izoh</MudButton>
-                </MudTooltip>
-                @if (string.IsNullOrWhiteSpace(Lead.Reason) is false)
-                {
-                    <MudTooltip Text="@Lead.Reason">
-                        <MudButton Class="rounded-pill px-4" Variant="Variant.Text" StartIcon="@Icons.Material.Rounded.EditNote" Color="Color.Error">Sabab</MudButton>
-                    </MudTooltip>
-                }
-            </MudStack>
-        </MudStack>
+            <MudTextField T="string" Label="Telefon raqami" @bind-Value="lead.Phone" Required="true" RequiredError="Lid telefon raqamini kiritish majburiy" />
+            <MudTextField T="string" @bind-Value="lead.Notes" Label="Qayd uchun"/>
+
+            <MudItem class="mb-4">
+                <div class="w-200">
+                    <MudAutocomplete T="string" Label="Lid kelgan joyi" SearchFunc="@Search2"
+                                    ResetValueOnEmptyText="@resetValueOnEmptyText"
+                                    CoerceText="@coerceText" CoerceValue="@coerceValue"
+                                    Required="true" RequiredError="Lid kelgan joyini tanlash majburiy"
+                                    @bind-Value="LeadSource"
+                                    />
+                </div>
+            </MudItem>
+
+            <MudItem class="mb-4">
+                <div class="w-200">
+                    <MudAutocomplete T="string" Label="Qiziqqan kurslari" SearchFunc="@Search1"
+                                    ResetValueOnEmptyText="@resetValueOnEmptyText"
+                                    CoerceText="@coerceText" CoerceValue="@coerceValue"
+                                    Required="true" RequiredError="Lid qiziqqan kursini tanlash majburiy"
+                                    @bind-Value="LeadCourse"
+                                    />
+                </div>
+            </MudItem>
+
+            <div class="d-flex align-center justify-space-between">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Register" Disabled="@(!success && LeadSource != "" && LeadCourse != "")" Class="ml-auto">Register</MudButton>
+            </div>
+        </MudForm>
     </DialogContent>
-    <DialogActions>
-        <MudButton Color="Color.Primary" Size="Size.Medium" OnClick="Submit">Ok</MudButton>
-    </DialogActions>
 </MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    private Lead lead = new();
+    public string? LeadCourse { get; set; }
+    public string? LeadSource { get; set; }
+    private readonly bool resetValueOnEmptyText = false;
+    private readonly bool coerceText = false;
+    private readonly bool coerceValue = false;
+    private MudDropContainer<Lead> dropContainer = default!;
+    bool success;
+    string[] errors = { };
+    MudForm form;
+    private string[] courses =
+    {
+        "English Phonics 1", "English Phonics 2", "English Phonics 3", "English Phonics 4",
+        "English Starters", "English The Spire 1", "English The Spire 2", "English The Spire 3",
+        "English The Spire 4", "English The Spire 5", "English The Spire 6", "English Level 7",
+        "English Level 8", "IT Scratch", "IT Lego", "IT Extended Scratch", "Lego (Spike Prime)",
+        "IT Savodxonlik", "IT App inventor", "IT Robotics (extended)", "IT Extended Python", "IT AutoCAD",
+        "IT C++", "IT Frontend", "IT Backend"  
+    };
+    private string[] sources = 
+        {
+            "Telegram", "Instagram", "Referral"
+        };
 
+    private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
+        {
+            await Task.Delay(5, token);
 
+            if (string.IsNullOrEmpty(value))
+                return courses;
+            return courses.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        }
+    private async Task<IEnumerable<string>> Search2(string value, CancellationToken token)
+    {
+        await Task.Delay(5, token);
+
+        if (string.IsNullOrEmpty(value))
+            return sources;
+        return sources.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    [Parameter] public EventCallback<Lead> OnLeadAdded { get; set; } 
+    private async Task Register() { lead.Source = Enum.Parse<LeadSource>(LeadSource); 
+        lead.InterestedCourse = new Course { Name = LeadCourse }; 
+        lead.Status = LeadStatus.Yangi; 
+        var newLead = await LeadService.CreateLeadAsync(lead); 
+        await OnLeadAdded.InvokeAsync(newLead); 
+        Snackbar.Add("Lead successfully created!", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(lead));
+
+    }
+}

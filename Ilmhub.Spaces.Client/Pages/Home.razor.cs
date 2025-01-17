@@ -124,7 +124,12 @@ public partial class Home
         DialogService.Show<LeadDetailsDialog>("Lead Details", new DialogParameters { ["Lead"] = lead });
     }
 
-    private void ApplyFilters()
+    private void ShowAddLead()
+    {
+        DialogService.Show<LeadAddDialog>("Add lead");
+    }
+
+    public void ApplyFilters()
     {
         filteredLeads = [.. leads.Where(l =>
             (string.IsNullOrEmpty(searchQuery) || 
@@ -190,6 +195,12 @@ public partial class Home
             await LeadService.UpdateLeadAsync(dropInfo.Item);
             UpdateLeadsOrder();
         }
+    }
+    public async Task OnLeadAdded(Lead newLead) 
+    { 
+        filteredLeads.Add(newLead); 
+        ApplyFilters(); 
+        await InvokeAsync(StateHasChanged); 
     }
 
     private void UpdateLeadsOrder()
